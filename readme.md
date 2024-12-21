@@ -29,3 +29,6 @@ The notebooks should be executed in the following order:
 The *IAL* approach can be configured to run either with a *RandomForest* or *XGBoost* (multi-output) regressor.
 
 The active learning strategy relies on the [moDAL](https://github.com/modAL-python/modAL) library.
+
+## Other sources
+Additional details and code can be found in the Masters Thesis *"An Empirical Study on the Effectiveness of Surrogate Model Solving for Efficient Architecture-based Quality Optimization"* (Vadim Titov, University of Hamburg, 2023) at this [repository](https://git.informatik.uni-hamburg.de/6titov/masters-thesis).
