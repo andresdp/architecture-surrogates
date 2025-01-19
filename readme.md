@@ -21,10 +21,10 @@ For computing the graph embeddings for each architectural instance, we relied on
 
 ## Notebooks
 The notebooks should be executed in the following order:
-1. *eda.ipynb*: it reads the two datasets and provides some statistics of the quality-attribute objectives, such as value distributions and correlations.
-2. *naive-approach.ipynb*: it implements the so-called naive approach, in which the whole dataset is split and trained with an ML model.
-3. *ial-approach.ipynb*: it implement the *Incremental Active-Learning (IAL)* approach, which divides the dataset in batches according to the tree level of the architectural instance and then runs the surrogate model.
-4. *reports.ipynb*: it computes performance metrics for the naive and *IAL* approaches, based on the CSV results saved by the two previous notebooks.
+1. *[eda.ipynb](https://github.com/andresdp/architecture-surrogates/blob/main/notebooks/eda.ipynb)*: it reads the two datasets and provides some statistics of the quality-attribute objectives, such as value distributions and correlations.
+2. *[naive-approach.ipynb](https://github.com/andresdp/architecture-surrogates/blob/main/notebooks/naive-approach.ipynb)*: it implements the so-called naive approach, in which the whole dataset is split and trained with an ML model.
+3. *[ial-approach.ipynb](https://github.com/andresdp/architecture-surrogates/blob/main/notebooks/ial-approach.ipynb)*: it implement the *Incremental Active-Learning (IAL)* approach, which divides the dataset in batches according to the tree level of the architectural instance and then runs the surrogate model.
+4. *[reports.ipynb](https://github.com/andresdp/architecture-surrogates/blob/main/notebooks/reports.ipynb)*: it computes performance metrics for the naive and *IAL* approaches, based on the CSV results saved by the two previous notebooks.
 
 The *IAL* approach can be configured to run either with a *RandomForest* or *XGBoost* (multi-output) regressor.
 
