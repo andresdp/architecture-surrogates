@@ -19,6 +19,7 @@ XGBOOST_DEFAULT_PARAMS = {
 FOLDER = "./models/"
 
 def train_xgboost(X, y, test_size=0.2, previous_model=None):
+    
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
     model = xgb.XGBRegressor(**XGBOOST_DEFAULT_PARAMS)
@@ -36,7 +37,7 @@ def initial_training(filename: str,  objs: List[str], model_name="xgboost", save
     """Function to simulate initial training."""
     print(f"Initial training with file: {filename} with {objs}")
 
-    df = pd.read_csv(filename, index_col=0)
+    df = pd.read_csv(filename)
     X = df.drop(columns=objs, axis=1)
     y = df[objs]
 
@@ -55,11 +56,19 @@ def initial_training(filename: str,  objs: List[str], model_name="xgboost", save
 
 
 CANDIDATES_SELECTION_PREFIX2 = "marked"
-def selecting_candidates(filename: str, fraction: float) -> None:
+def selecting_candidates(filename: str, fraction: float, objs: List[str]) -> None:
     """Function to simulate selecting candidates."""
-    print(f"Selecting candidates with file: {filename} and fraction={fraction}")
-    df = pd.read_csv(filename, index_col=0)
-    
+    print(f"Selecting candidates with file: {filename}, fraction={fraction} and objectives {objs}")
+    df = pd.read_csv(filename)
+    # TODO: Mark candidates (rows) that need to be evaluated
+    # Randomly select k rows and assign their objective values to True, for the remaining objective values assigned them to NaN
+    k = round(len(df) * fraction)
+    candidates = df.sample(n=k, random_state=42)
+    df[objs] = np.nan  # Initialize all objective columns to NaN
+    # df.loc[~df.index.isin(candidates.index), objs] = np.nan # Set non-candidates to NaN
+    df.loc[candidates.index, objs] = 1.0  # Mark selected candidates with True
+    print(f"Candidates selected: {len(candidates)} out of {len(df)}")
+
     filename_ = filename.split("/")[-1] if "/" in filename else filename
     folder_ = filename.removesuffix(filename_)
     filename_ = filename_.removesuffix(".csv")
@@ -74,9 +83,13 @@ def retraining(filename: str, objs: List[str], model_name="xgboost", save=True) 
     """Function to simulate retraining."""
     print(f"Retraining with file: {filename} with {objs}")
 
-    df = pd.read_csv(filename, index_col=0)
+    df = pd.read_csv(filename)
+    # Remove first all rows with NaN values
+    df = df.dropna()
+    print(f"Retraining with {len(df)} samples")
     X = df.drop(columns=objs, axis=1)
     y = df[objs]
+    # TODO: It needs to ony use the (marked) values that were evaluated
 
     filename_ = filename.split("/")[-1] if "/" in filename else filename    
     filename_ = filename_.removesuffix(".csv").replace("_"+CANDIDATES_SELECTION_PREFIX3, "")
@@ -104,8 +117,11 @@ PREFIX_PREDICTION = "predicted"
 def predicting(filename: str, objs: List[str], model_name="xgboost") -> None:
     """Function to simulate predicting."""
     print(f"Predicting with file: {filename}")
-    df = pd.read_csv(filename, index_col=0)
-  
+    df = pd.read_csv(filename)
+    # Select the rows with and without marked candidates
+    not_nan_df = df[df[objs].notna().any(axis=1)]
+    nan_df = df[df[objs].isna().all(axis=1)]
+
     filename_ = filename.split("/")[-1] if "/" in filename else filename
     folder_ = filename.removesuffix(filename_)
     model_filename_ = filename_.removesuffix(".csv").replace("_"+CANDIDATES_SELECTION_PREFIX3, "")
@@ -113,8 +129,9 @@ def predicting(filename: str, objs: List[str], model_name="xgboost") -> None:
   
     # print(filename_, model_filename_, model_output_name)
     if os.path.exists(model_output_name):
-        X_test = df.drop(columns=objs, axis=1)
-        y_test = df[objs]
+        X_test = not_nan_df.drop(columns=objs, axis=1)
+        y_test = not_nan_df[objs]
+        # It needs to assign the prediction for the non-marked values
 
         model = xgb.XGBRegressor()
         model.load_model(model_output_name)
@@ -124,7 +141,12 @@ def predicting(filename: str, objs: List[str], model_name="xgboost") -> None:
         rmse = np.sqrt(mse) 
         r2 = r2_score(y_test, y_pred)
         print(f"Testing XGBoost model with error R2={r2} and RMSE={rmse}")
-    
+
+        # Predict for the NaN values
+        X_pred = nan_df.drop(columns=objs, axis=1)
+        y_pred = model.predict(X_pred)
+        df.loc[nan_df.index, objs] = y_pred
+
     output_name = folder_ + filename_.replace(CANDIDATES_SELECTION_PREFIX3, PREFIX_PREDICTION)
     df.to_csv(output_name, index=False)
     print(f">> predicted data saved to {output_name}")
@@ -149,8 +171,8 @@ if __name__ == "__main__":
     if args.init and args.objectives:
         initial_training(args.init, args.objectives)
 
-    if args.select and args.fraction:
-        selecting_candidates(args.select, args.fraction)
+    if args.select and args.fraction and args.objectives:
+        selecting_candidates(args.select, args.fraction, args.objectives)
 
     if args.retrain and args.objectives:
         retraining(args.retrain, args.objectives)

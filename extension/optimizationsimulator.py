@@ -14,6 +14,8 @@ class OptimizationEngine:
     def __init__(self, problem: str, algorithm: str):
         self.algorithm = algorithm
         self.problem = problem
+        self.objectives = []
+        self.surrogate_objectives = []
 
     @staticmethod
     def call_python_script(script_path="surrogatesdriver.py", script_args=[]):
@@ -42,7 +44,7 @@ class OptimizationEngine:
         
         return output_name
 
-    INITIAL_TRAINING_ARGS = ["-i", "-o"] # Check if we need parameters for this script
+    INITIAL_TRAINING_ARGS = ["-i", "-o"] 
     def initial_train(self, filename: str, n_round: int=0) -> str:
         """Perform initial training of the surrogate model."""
         
@@ -58,16 +60,16 @@ class OptimizationEngine:
         print(f">> initial data saved to {output_name}")
         
         # 1. Invoke the surrogate to perform initial training
-        args = [self.INITIAL_TRAINING_ARGS[0], output_name, self.INITIAL_TRAINING_ARGS[1]] + self.objectives
+        args = [OptimizationEngine.INITIAL_TRAINING_ARGS[0], output_name, OptimizationEngine.INITIAL_TRAINING_ARGS[1]] + self.surrogate_objectives
         self.call_python_script(script_args=args)
         
         return output_name
 
-    CANDIDATE_SELECTION_ARGS = ["-s", "-f"]# Check if we need parameters for this script
+    CANDIDATE_SELECTION_ARGS = ["-s", "-f", "-o"] # Check if we need parameters for this script
     def select_candidates_for_solvers(self, filename: str, n_round: int=0) -> None:
         """Select candidates for the optimization solvers."""
         
-        # 1. Invoke the surrogate to select best candidates to evaluate with solvers
+        # 2. Invoke the surrogate to select best candidates to evaluate with solvers
         print(f">> Preparing population for candidates selection for {self.algorithm} on {self.problem} for round {n_round}")
         
         filename_ = filename.split("/")[-1] if "/" in filename else filename
@@ -75,11 +77,12 @@ class OptimizationEngine:
         filename_ = filename_.removeprefix(str(n_round)+"_") 
         output_name = folder_ + str(n_round) + "_" + filename_
 
-        dataset = self.assemble_dataframe(self.X[n_round-1], self.y[n_round-1])
+        # In this case, the values of the Y column are not needed
+        dataset = self.assemble_dataframe(self.X[n_round-1]) #, self.y[n_round-1])
         dataset.to_csv(output_name, index=False)
         print(f">> data to select saved to {output_name}")
 
-        args = [self.CANDIDATE_SELECTION_ARGS[0], output_name, self.CANDIDATE_SELECTION_ARGS[1], str(self.fraction)] 
+        args = [OptimizationEngine.CANDIDATE_SELECTION_ARGS[0], output_name, OptimizationEngine.CANDIDATE_SELECTION_ARGS[1], str(self.fraction), OptimizationEngine.CANDIDATE_SELECTION_ARGS[2]] + self.surrogate_objectives
         self.call_python_script(script_args=args)
         
         return output_name
@@ -89,27 +92,38 @@ class OptimizationEngine:
     def run_solvers_on_candidates(self, filename: str, n_round: int=0) -> None:
         """Run optimization solvers on the selected candidates."""
 
-        # 2. Read the population file with candidate updates
+        # 3. Read the population file with candidate updates
         # Ideally, this file should be created by the surrogate model        
         filename_ = filename.split("/")[-1] if "/" in filename else filename
         folder_ = filename.removesuffix(filename_)
         filename_ = filename_.removeprefix(str(n_round)+"_").removesuffix(".csv")
         output_name = folder_ + str(n_round) + "_" + filename_ + "_" + self.CANDIDATES_SELECTION_PREFIX2 + ".csv"
         print(f">> Read population (with marked candidates) from {output_name}")
+        input_df = pd.read_csv(output_name)
+        # Get a  mask for all rows from input_df whose objective values are all not NaN
+        mask = input_df[self.surrogate_objectives].notna().all(axis=1)
 
-        # 3. Apply solvers only on rows that are candidates
+        # 4. Apply solvers only on rows that are candidates
         # TODO: Call Easier code here on candidates from population data
+        # Add values for the objectives that do not belong to surrogate objectives
+        # additional_objectives = list(set(self.objectives) - set(self.surrogate_objectives))
+        # original_dataset = self.assemble_dataframe(self.X[n_round-1], self.y[n_round-1])
+        # input_df[additional_objectives] = original_dataset[additional_objectives]  # Add additional objectives to the input dataframe
 
         print(f">> Passing population with evaluated candidates - {self.algorithm} on {self.problem} for round {n_round}")
         output_name = output_name.replace(OptimizationEngine.CANDIDATES_SELECTION_PREFIX2, OptimizationEngine.CANDIDATES_SELECTION_PREFIX3)
         dataset = self.assemble_dataframe(self.X[n_round-1], self.y[n_round-1])
+        # All objective values that are not True in mask must be assigned to NaN
+  
+        dataset.loc[~mask, self.surrogate_objectives] = np.nan
+
         dataset.to_csv(output_name, index=False)
         print(f">> data evaluated saved to {output_name}")
         
         return output_name
 
-    RETRAIN_ARGS = ["-r", "-o"] # Check if we need parameters for this script
-    PREDICT_ARGS = ["-p", "-o"] # Check if we need parameters for this script
+    RETRAIN_ARGS = ["-r", "-o"] 
+    PREDICT_ARGS = ["-p", "-o"] 
     PREFIX_PREDICTION = "predicted"
     def retrain_and_predict(self, filename: str, n_round: int) -> None:
         """Perform training of the surrogate model (beyond round 0)."""
@@ -121,15 +135,15 @@ class OptimizationEngine:
         filename_ = filename_.removeprefix(str(n_round)+"_") 
         output_name = folder_ + str(n_round) + "_" + filename_
         
-        # 1. Invoke the surrogate to perform re-training
-        args = [self.RETRAIN_ARGS[0], output_name, self.RETRAIN_ARGS[1]] + self.objectives
+        # 5. Invoke the surrogate to perform re-training
+        args = [OptimizationEngine.RETRAIN_ARGS[0], output_name, OptimizationEngine.RETRAIN_ARGS[1]] + self.surrogate_objectives
         self.call_python_script(script_args=args)
     
-        # 2. Invoke the surrogate to perform predictions
-        args = [self.PREDICT_ARGS[0], output_name, self.PREDICT_ARGS[1]] + self.objectives
+        # 6. Invoke the surrogate to perform predictions
+        args = [OptimizationEngine.PREDICT_ARGS[0], output_name, OptimizationEngine.PREDICT_ARGS[1]] + self.surrogate_objectives
         self.call_python_script(script_args=args)
         
-        # 3. Read the population file with everything predicted
+        # 7. Read the population file with everything predicted
         # Ideally, this file should be created by the surrogate model        
         output_name = output_name.replace(OptimizationEngine.CANDIDATES_SELECTION_PREFIX3, OptimizationEngine.PREFIX_PREDICTION)
         print(f">> Read population (with predictions) from {output_name}")
@@ -162,10 +176,12 @@ class OptimizationEngine:
         #  For now, we just return a dummy result
         # return {"result": "dummy_result", "evaluations": max_evaluations}
 
-    def load_file(self, filename: str, objectives: List[str], fraction: float=0.2) -> None:
+    def load_file(self, filename: str, objectives: List[str], 
+                  surrogate_objectives: List[str]=None, fraction: float=0.2) -> None:
         """Function to simulate loading a file."""
         self.df = pd.read_csv(filename, index_col=0)
         self.objectives = objectives
+        self.surrogate_objectives = surrogate_objectives if surrogate_objectives is not None else objectives
         print(f"Loading file: {filename} {self.df.shape}")
         self.fraction = fraction
 
@@ -174,10 +190,15 @@ class OptimizationEngine:
                                                         split_by_level=True)
         # Note that self.X and self.y are lists of numpy arrays, one for each level
 
-    def assemble_dataframe(self, X: np.ndarray, y: np.ndarray) -> pd.DataFrame:
+    def assemble_dataframe(self, X: np.ndarray, y: np.ndarray=None) -> pd.DataFrame:
         """Assembles a DataFrame from the feature matrix X and target vector y."""
         df = pd.DataFrame(data=X, columns=self.feature_names)
-        df[self.objectives] = y
+        # Get the indices of the surrogate objectives
+        if y is not None:
+            indices = [self.objectives.index(obj) for obj in self.surrogate_objectives]
+            df[self.surrogate_objectives] = y[:,indices] # Assign ony the positions for surrogates
+        else:
+            df[self.surrogate_objectives] = np.nan
         return df #.head(20)
 
 #############################################################
@@ -265,10 +286,10 @@ OBJ_COCOME = ['m1', 'm2', 'm3', 'm4','p1', 'p2', 'p3', 'p4']
 if __name__ == "__main__":
     """Main method to run the optimization engine."""
     optimization_engine = OptimizationEngine(problem="cocome", algorithm="nsgaii")
-    optimization_engine.load_file(COCOME_DATAPATH, OBJ_COCOME)
+    optimization_engine.load_file(COCOME_DATAPATH, OBJ_COCOME, surrogate_objectives=['m1', 'p1', 'p4'], fraction=0.3)
 
     # optimization_engine = OptimizationEngine(problem="stplus", algorithm="nsgaii")
-    # optimization_engine.load_file(STPLUS_DATAPATH, OBJ_STPLUS)
+    # optimization_engine.load_file(STPLUS_DATAPATH, OBJ_STPLUS) #, surrogate_objectives=['p1', 'p2'], fraction=0.3)
 
     optimization_engine.run_engine(max_evaluations=5)
 
