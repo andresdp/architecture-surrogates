@@ -18,9 +18,15 @@ XGBOOST_DEFAULT_PARAMS = {
 
 FOLDER = "./models/"
 
-def train_xgboost(X, y, test_size=0.2, previous_model=None):
-    
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
+def train_xgboost(X, y, test_size=0.2, stratify=None, previous_model=None):
+
+    s = None
+    if stratify is not None:
+        print(f"Applying stratification on level!")
+        s = X[stratify]
+        X.drop(stratify, axis=1, inplace=True)
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, stratify=s, random_state=42)
 
     model = xgb.XGBRegressor(**XGBOOST_DEFAULT_PARAMS)
     model.fit(X_train, y_train, xgb_model=previous_model)
@@ -29,7 +35,7 @@ def train_xgboost(X, y, test_size=0.2, previous_model=None):
     rmse = np.sqrt(mse) 
     r2 = r2_score(y_test, y_pred)
 
-    print(f"Training XGBoost model with error R2={r2} and RMSE={rmse}")
+    print(f"Training XGBoost model - Test error R2={r2} and RMSE={rmse}")
     return model
 
 
@@ -41,7 +47,10 @@ def initial_training(filename: str,  objs: List[str], model_name="xgboost", save
     X = df.drop(columns=objs, axis=1)
     y = df[objs]
 
-    model = train_xgboost(X.values, y.values)
+    if 'all' in filename:
+        model = train_xgboost(X, y, stratify='level')
+    else:
+        model = train_xgboost(X, y)
     
     model_output_name = None
     if save:
@@ -60,10 +69,13 @@ def selecting_candidates(filename: str, fraction: float, objs: List[str]) -> Non
     """Function to simulate selecting candidates."""
     print(f"Selecting candidates with file: {filename}, fraction={fraction} and objectives {objs}")
     df = pd.read_csv(filename)
-    # TODO: Mark candidates (rows) that need to be evaluated
+    # Mark candidates (rows) that need to be evaluated
     # Randomly select k rows and assign their objective values to True, for the remaining objective values assigned them to NaN
     k = round(len(df) * fraction)
-    candidates = df.sample(n=k, random_state=42)
+    if fraction < 1.0:
+        candidates = df.sample(n=k, random_state=42)
+    else:
+        candidates = df
     df[objs] = np.nan  # Initialize all objective columns to NaN
     # df.loc[~df.index.isin(candidates.index), objs] = np.nan # Set non-candidates to NaN
     df.loc[candidates.index, objs] = 1.0  # Mark selected candidates with True
@@ -106,7 +118,7 @@ def retraining(filename: str, objs: List[str], model_name="xgboost", save=True) 
         m.load_model(previous_model_output_name)
         previous_model = m.get_booster()  # Get the booster from the model
     
-    model = train_xgboost(X.values, y.values, previous_model=previous_model)
+    model = train_xgboost(X, y, previous_model=previous_model)
 
     if save:
         model.save_model(model_output_name) # Saves in JSON format
@@ -129,23 +141,25 @@ def predicting(filename: str, objs: List[str], model_name="xgboost") -> None:
   
     # print(filename_, model_filename_, model_output_name)
     if os.path.exists(model_output_name):
-        X_test = not_nan_df.drop(columns=objs, axis=1)
-        y_test = not_nan_df[objs]
+        X_train = not_nan_df.drop(columns=objs, axis=1)
+        y_train = not_nan_df[objs]
         # It needs to assign the prediction for the non-marked values
 
         model = xgb.XGBRegressor()
         model.load_model(model_output_name)
         
-        y_pred = model.predict(X_test)
-        mse = mean_squared_error(y_test, y_pred)
+        y_pred = model.predict(X_train)
+        mse = mean_squared_error(y_train, y_pred)
         rmse = np.sqrt(mse) 
-        r2 = r2_score(y_test, y_pred)
-        print(f"Testing XGBoost model with error R2={r2} and RMSE={rmse}")
+        r2 = r2_score(y_train, y_pred)
+        print(f"Training XGBoost model (increment) - Train error R2={r2} and RMSE={rmse}")
 
         # Predict for the NaN values
-        X_pred = nan_df.drop(columns=objs, axis=1)
-        y_pred = model.predict(X_pred)
-        df.loc[nan_df.index, objs] = y_pred
+        if len(nan_df) > 0:
+            X_pred = nan_df.drop(columns=objs, axis=1)
+            y_pred = model.predict(X_pred)
+            df.loc[nan_df.index, objs] = y_pred
+            # With the available data, there's no way to compute the test error here
 
     output_name = folder_ + filename_.replace(CANDIDATES_SELECTION_PREFIX3, PREFIX_PREDICTION)
     df.to_csv(output_name, index=False)

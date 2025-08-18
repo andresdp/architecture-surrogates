@@ -36,9 +36,13 @@ class OptimizationEngine:
         # Get the filename without folder information
         filename_ = filename.split("/")[-1] if "/" in filename else filename
         folder_ = filename.removesuffix(filename_)
-        output_name = folder_ + str(n_round)+"_"+filename_
-
-        dataset = self.assemble_dataframe(self.X[n_round-1], self.y[n_round-1])
+        if n_round is None:
+          output_name = folder_ + "all_"+filename_
+          dataset = self.assemble_dataframe(self.X, self.y)
+        else:
+          output_name = folder_ + str(n_round)+"_"+filename_
+          dataset = self.assemble_dataframe(self.X[n_round-1], self.y[n_round-1])
+        
         dataset.to_csv(output_name, index=False)
         print(f">> New population saved to {output_name}.")
         
@@ -52,10 +56,15 @@ class OptimizationEngine:
         
         filename_ = filename.split("/")[-1] if "/" in filename else filename
         folder_ = filename.removesuffix(filename_)
-        filename_ = filename_.removeprefix(str(n_round)+"_") 
-        output_name = folder_ + str(n_round) + "_" + filename_
-        
-        dataset = self.assemble_dataframe(self.X[0], self.y[0])
+        if n_round is not None:
+          filename_ = filename_.removeprefix(str(n_round)+"_") 
+          output_name = folder_ + str(n_round) + "_" + filename_
+          dataset = self.assemble_dataframe(self.X[0], self.y[0])
+        else:
+          filename_ = filename_.removeprefix("all_") 
+          output_name = folder_ + "all_" + filename_
+          dataset = self.assemble_dataframe(self.X, self.y)
+
         dataset.to_csv(output_name, index=False)
         print(f">> initial data saved to {output_name}")
         
@@ -151,7 +160,7 @@ class OptimizationEngine:
         return output_name
     
     FOLDER = "./runs/"
-    def run_engine(self, max_evaluations: int = 10, training_percent: float = 0.1) -> dict:
+    def run_engine(self, max_evaluations: int = 10, incremental: bool=True, training_percent: float = 0.1) -> dict:
         """Run the optimization algorithm."""
         print(f"Running {self.algorithm} on {self.problem} for {max_evaluations} evaluations.")
         # Here you would implement the logic to run the optimization algorithm
@@ -159,6 +168,16 @@ class OptimizationEngine:
         # Check if the folder exists, if not create it
         if not os.path.exists(OptimizationEngine.FOLDER):
             os.makedirs(OptimizationEngine.FOLDER)
+
+        if not incremental:
+          print(f"It's NON-incremental mode!")
+          print(f"Round all ======")
+          population_filename = OptimizationEngine.FOLDER+f"{self.problem}_{self.algorithm}.csv"
+          last_population_filename = self.generate_population(population_filename, n_round=None)
+          _ = self.initial_train(last_population_filename, n_round=None)
+          print(f"==========")
+          print("Done!") 
+          return
 
         for n_round in range(1, max_evaluations + 1):
             print(f"Round {n_round} of {max_evaluations} ======")
@@ -173,11 +192,12 @@ class OptimizationEngine:
                 last_population_filename = self.retrain_and_predict(current_filename, n_round)
         print(f"==========")
         print("Done!")
+        return
         #  For now, we just return a dummy result
         # return {"result": "dummy_result", "evaluations": max_evaluations}
 
-    def load_file(self, filename: str, objectives: List[str], 
-                  surrogate_objectives: List[str]=None, fraction: float=0.2) -> None:
+    def load_file(self, filename: str, objectives: List[str], surrogate_objectives: List[str]=None,
+                  split_by_level: bool=True, tactics: bool=True, embeddings: bool=True, fraction: float=0.2) -> None:
         """Function to simulate loading a file."""
         self.df = pd.read_csv(filename, index_col=0)
         self.objectives = objectives
@@ -186,8 +206,8 @@ class OptimizationEngine:
         self.fraction = fraction
 
         self.X, self.y, self.feature_names = get_regression_data(self.df, target=self.objectives, 
-                                                        tactics=True, embeddings=False, 
-                                                        split_by_level=True)
+                                                        tactics=tactics, embeddings=embeddings, 
+                                                        split_by_level=split_by_level)
         # Note that self.X and self.y are lists of numpy arrays, one for each level
 
     def assemble_dataframe(self, X: np.ndarray, y: np.ndarray=None) -> pd.DataFrame:
@@ -262,14 +282,16 @@ def get_regression_data(df, target, cols=None, # Target columns
       X_list.append(df_level.drop(['level']+target, axis=1).values)
       y_list.append(df_level[target].values)
   else:
-    X_list = X.drop(['level']+target, axis=1).values
+    # X_list = X.drop(['level']+target, axis=1).values
+    X_list = X.drop(target, axis=1).values
     if len(target) == 1:
       y_list = X[target[0]].values
     else:
       y_list = X[target].values
 
   fnames = list(X.columns)
-  fnames.remove('level')
+  if split_by_level:
+    fnames.remove('level')
   for t in target:
     fnames.remove(t)
 
@@ -285,11 +307,23 @@ OBJ_COCOME = ['m1', 'm2', 'm3', 'm4','p1', 'p2', 'p3', 'p4']
 
 if __name__ == "__main__":
     """Main method to run the optimization engine."""
+
+    n_steps = 5
     optimization_engine = OptimizationEngine(problem="cocome", algorithm="nsgaii")
-    optimization_engine.load_file(COCOME_DATAPATH, OBJ_COCOME, surrogate_objectives=['m1', 'p1', 'p4'], fraction=0.3)
+    optimization_engine.load_file(COCOME_DATAPATH, OBJ_COCOME, 
+                                  # surrogate_objectives=['m1', 'p1', 'p4'], fraction=0.4,
+                                  split_by_level=(n_steps is not None)
+                                )
+    
+    # n_steps = 2
+    # optimization_engine = OptimizationEngine(problem="stplus", algorithm="nsgaii")
+    # optimization_engine.load_file(STPLUS_DATAPATH, OBJ_STPLUS, 
+    #                               # embeddings=False, tactics=True,
+    #                               split_by_level=(n_steps is not None),
+    #                               #, surrogate_objectives=['p1', 'p2'], fraction=0.3
+    #                             )
 
-    # optimization_engine = OptimizationEngine(problem="stplus", algorithm="nsgaii")
-    # optimization_engine.load_file(STPLUS_DATAPATH, OBJ_STPLUS) #, surrogate_objectives=['p1', 'p2'], fraction=0.3)
-
-    optimization_engine.run_engine(max_evaluations=5)
-
+    if n_steps is not None:
+        optimization_engine.run_engine(max_evaluations=n_steps, incremental=True)
+    else:
+        optimization_engine.run_engine(max_evaluations=n_steps, incremental=False)
