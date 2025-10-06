@@ -39,21 +39,31 @@ from main_cocome_raw_training import (
 
 def run_simulation_worker(args):
     """Worker function for parallel simulation execution"""
-    simulation_id, data_file, enable_early_stopping, patience, use_gpu, use_multioutput = args
+    simulation_id, data_file, enable_early_stopping, patience, use_gpu = args
     
     # Set different random seed for each simulation
     np.random.seed(42 + simulation_id * 100)
     
-    # Create trainer instance with verbose=False to reduce output
-    trainer = CoCoMERawOptimizationTrainer(data_file, verbose=False)
+    # Change to the correct directory where the CSV file is located
+    import os
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    original_cwd = os.getcwd()
+    os.chdir(script_dir)
     
-    # Run the comparison using CoCoMERawOptimizationTrainer methods
-    trainer.prepare_data()
-    # Setup all optimizers as defined in the current training pipeline
-    trainer.setup_optimizers(use_multioutput=use_multioutput)
-    trainer.run_optimization_comparison(max_level=5, train_ratio=0.7, sample_ratio=0.3, use_multioutput=use_multioutput)
-    
-    return simulation_id, trainer.results
+    try:
+        # Create trainer instance with verbose=False to reduce output
+        trainer = CoCoMERawOptimizationTrainer(data_file, verbose=False)
+        
+        # Run the comparison using CoCoMERawOptimizationTrainer methods
+        trainer.prepare_data()
+        # Setup all optimizers as defined in the current training pipeline
+        trainer.setup_optimizers()
+        trainer.run_optimization_comparison(max_level=5, train_ratio=0.7, sample_ratio=0.3)
+        
+        return simulation_id, trainer.results
+    finally:
+        # Restore original working directory
+        os.chdir(original_cwd)
 
 
 class MonteCarloRawOptimizationAnalysis:
@@ -93,16 +103,26 @@ class MonteCarloRawOptimizationAnalysis:
         # Set different random seed for each simulation
         np.random.seed(42 + simulation_id * 100)
         
-        # Create trainer instance with verbose=False to reduce output
-        trainer = CoCoMERawOptimizationTrainer(self.data_file, verbose=False)
+        # Change to the correct directory where the CSV file is located
+        import os
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        original_cwd = os.getcwd()
+        os.chdir(script_dir)
         
-        # Run the comparison using CoCoMERawOptimizationTrainer methods
-        trainer.prepare_data()
-        # Setup all optimizers per current training code (multioutput flag is accepted but all models are created)
-        trainer.setup_optimizers(use_multioutput=self.use_multioutput)
-        trainer.run_optimization_comparison(max_level=5, train_ratio=0.7, sample_ratio=0.3, use_multioutput=self.use_multioutput)
-        
-        return trainer.results
+        try:
+            # Create trainer instance with verbose=False to reduce output
+            trainer = CoCoMERawOptimizationTrainer(self.data_file, verbose=False)
+            
+            # Run the comparison using CoCoMERawOptimizationTrainer methods
+            trainer.prepare_data()
+            # Setup all optimizers per current training code (multioutput flag is accepted but all models are created)
+            trainer.setup_optimizers()
+            trainer.run_optimization_comparison(max_level=5, train_ratio=0.7, sample_ratio=0.3)
+            
+            return trainer.results
+        finally:
+            # Restore original working directory
+            os.chdir(original_cwd)
     
     def run_monte_carlo_analysis(self, enable_early_stopping=True, patience=3):
         """Run multiple simulations and collect results"""
@@ -113,7 +133,7 @@ class MonteCarloRawOptimizationAnalysis:
         print(f"Patience: {patience}")
         print(f"Parallel processing: {'enabled' if self.use_parallel else 'disabled'}")
         print(f"GPU acceleration: {'enabled' if self.use_gpu else 'disabled'}")
-        print(f"XGBoost approach: {'Multi-output (single model)' if self.use_multioutput else 'Single-output (separate models)'}")
+        print(f"Optimizers: CatBoost (Single/Multi-output)")
         if self.use_parallel:
             print(f"CPU cores available: {mp.cpu_count()}")
         print("="*60)
@@ -167,7 +187,7 @@ class MonteCarloRawOptimizationAnalysis:
         """Run simulations in parallel"""
         # Prepare arguments for parallel execution
         args_list = [
-            (sim_id, self.data_file, enable_early_stopping, patience, self.use_gpu, self.use_multioutput)
+            (sim_id, self.data_file, enable_early_stopping, patience, self.use_gpu)
             for sim_id in range(self.n_simulations)
         ]
         
@@ -198,6 +218,14 @@ class MonteCarloRawOptimizationAnalysis:
         """Store results from a single simulation across all optimizers"""
         target_names = ['m1', 'm2', 'm3', 'm4', 'p1', 'p2', 'p3', 'p4']
         
+        # Debug: Print what results we actually got
+        for optimizer_name, res in results.items():
+            print(f"Debug - Optimizer: {optimizer_name}, Keys: {list(res.keys())}")
+            if 'test_mse' in res:
+                print(f"  test_mse targets: {list(res['test_mse'].keys())}")
+            if 'mse_scores_test_scaled' in res:
+                print(f"  mse_scores_test_scaled length: {len(res['mse_scores_test_scaled'])}")
+        
         for optimizer_name, res in results.items():
             # Initialize structure on first encounter
             if optimizer_name not in all_results:
@@ -209,10 +237,10 @@ class MonteCarloRawOptimizationAnalysis:
             if 'mse_scores_test_scaled' in res:
                 all_results[optimizer_name]['mse_scores_test_scaled'].append(res['mse_scores_test_scaled'])
             # Append per-target test MSE (scaled) series for this simulation
-            if 'test_mse_scaled' in res:
+            if 'test_mse' in res:  # Changed from 'test_mse_scaled' to 'test_mse'
                 for target in target_names:
-                    if target in res['test_mse_scaled']:
-                        all_results[optimizer_name]['test_mse_scaled'][target].append(res['test_mse_scaled'][target])
+                    if target in res['test_mse']:
+                        all_results[optimizer_name]['test_mse_scaled'][target].append(res['test_mse'][target])
     
     def _print_timing_summary(self):
         """Print timing summary"""
@@ -284,77 +312,120 @@ class MonteCarloRawOptimizationAnalysis:
         return self
     
     def create_monte_carlo_visualizations(self):
-        """Create visualizations matching training plots: overall and per-target standardized test MSE"""
-        print("Creating Monte Carlo visualizations for raw features (standardized test MSE)...")
+        """Create two separate visualizations: Overall RMSE and per-target RMSE plots"""
+        print("Creating Monte Carlo visualizations for raw features (standardized test RMSE)...")
         
-        # Style map matching main training visualization
+        # Create output directory if it doesn't exist
+        import os
+        output_dir = 'Raw_training'
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+            print(f"Created output directory: {output_dir}")
+        
+        # Debug: Print what data we have
+        print(f"Statistical summary keys: {list(self.statistical_summary.keys())}")
+        for optimizer_name, stats in self.statistical_summary.items():
+            print(f"Optimizer {optimizer_name} stats keys: {list(stats.keys())}")
+            if 'mse_scores_test_scaled' in stats:
+                print(f"  mse_scores_test_scaled data available: {len(stats['mse_scores_test_scaled']['mean'])}")
+            if 'test_mse_scaled' in stats:
+                print(f"  test_mse_scaled targets: {list(stats['test_mse_scaled'].keys())}")
+                for target, target_stats in stats['test_mse_scaled'].items():
+                    if target_stats and 'mean' in target_stats:
+                        print(f"    {target}: {len(target_stats['mean'])} data points")
+        
+        # Style map for CatBoost optimizers only
         style_map = {
-            'XGBoost_MultiOutput': {'linestyle': '-', 'marker': 's', 'color': 'green', 'label': 'XGBoost_MultiOutput'},
-            'XGBoost_SingleOutput': {'linestyle': '-', 'marker': 'o', 'color': 'blue', 'label': 'XGBoost_SingleOutput'},
-            'LightGBM_MultiOutput': {'linestyle': '-', 'marker': 'D', 'color': 'purple', 'label': 'LightGBM_MultiOutput'},
+            'CatBoost_SingleOutput': {'linestyle': '--', 'marker': 'd', 'color': 'red', 'label': 'CatBoost_SingleOutput'},
             'CatBoost_MultiOutput': {'linestyle': '-', 'marker': '^', 'color': 'orange', 'label': 'CatBoost_MultiOutput'},
         }
         
-        # Create 3x4 grid similar to training plots
-        fig, axes = plt.subplots(3, 4, figsize=(20, 15))
-        fig.suptitle(f'Monte Carlo Analysis - Raw Features - {self.n_simulations} Simulations', fontsize=16, fontweight='bold')
-        
-        # Overall standardized Test MSE with confidence intervals
-        ax_overall = axes[0, 0]
-        ax_overall.set_title('Overall Test MSE (Raw Features, Standardized Targets)', fontsize=14, fontweight='bold')
+        # PLOT 1: Overall Test RMSE
+        fig1, ax1 = plt.subplots(1, 1, figsize=(10, 8))
         for optimizer_name, stats in self.statistical_summary.items():
             if 'mse_scores_test_scaled' not in stats or optimizer_name not in style_map:
+                print(f"Skipping {optimizer_name}: missing data or not in style_map")
                 continue
-            series = stats['mse_scores_test_scaled']
-            levels = range(1, len(series['mean']) + 1)
+            # Convert MSE to RMSE
+            mse_series = stats['mse_scores_test_scaled']
+            if len(mse_series['mean']) == 0:
+                print(f"Skipping {optimizer_name}: no data points")
+                continue
+                
+            rmse_mean = np.sqrt(mse_series['mean'])
+            rmse_std = np.sqrt(mse_series['std'])  # Approximate RMSE std
+            
+            levels = range(1, len(rmse_mean) + 1)
             style = style_map[optimizer_name]
-            ax_overall.plot(levels, series['mean'], label=style.get('label', optimizer_name),
-                            linestyle=style['linestyle'], marker=style['marker'], color=style['color'],
-                            markersize=6, linewidth=2)
-            ax_overall.fill_between(levels, series['mean'] - series['std'], series['mean'] + series['std'],
-                                    color=style['color'], alpha=0.15)
-        ax_overall.set_xlabel('Complexity Level')
-        ax_overall.set_ylabel('MSE')
-        ax_overall.legend()
-        ax_overall.grid(True, alpha=0.3)
-        ax_overall.set_yscale('log')
+            ax1.plot(levels, rmse_mean, label=style.get('label', optimizer_name),
+                    linestyle=style['linestyle'], marker=style['marker'], color=style['color'],
+                    markersize=8, linewidth=3)
+            ax1.fill_between(levels, rmse_mean - rmse_std, rmse_mean + rmse_std,
+                            color=style['color'], alpha=0.15)
+            print(f"Plotted {optimizer_name}: {len(levels)} levels")
         
-        # Per-target standardized Test MSE with confidence intervals
+        ax1.set_xlabel('Level', fontsize=12)
+        ax1.set_ylabel('RMSE', fontsize=12)
+        ax1.legend(fontsize=11)
+        ax1.grid(True, alpha=0.3)
+        ax1.set_yscale('log')
+        ax1.set_xticks(range(1, 6))  # Set x-axis to show only integers 1-5
+        
+        plt.tight_layout()
+        filename1 = f'Raw_training/monte_carlo_overall_rmse_Raw.png'
+        plt.savefig(filename1, dpi=300, bbox_inches='tight')
+        print(f"Overall RMSE visualization saved: {filename1}")
+        plt.show()
+        
+        # PLOT 2: Per-target Test RMSE (2x4 grid)
+        fig2, axes2 = plt.subplots(2, 4, figsize=(20, 10))
+        
         objectives = ['m1', 'm2', 'm3', 'm4', 'p1', 'p2', 'p3', 'p4']
-        plot_positions = [(0, 2), (0, 3), (1, 0), (1, 1), (1, 2), (1, 3), (2, 0), (2, 1)]
+        
         for i, obj in enumerate(objectives):
-            row, col = plot_positions[i]
-            ax = axes[row, col]
-            ax.set_title(f'{obj} - MSE (Raw Features)', fontsize=14, fontweight='bold')
+            row = i // 4  # 0 for first 4, 1 for last 4
+            col = i % 4   # 0,1,2,3 for each row
+            ax = axes2[row, col]
+            
+            plotted_any = False
             for optimizer_name, stats in self.statistical_summary.items():
                 if optimizer_name not in style_map:
                     continue
                 target_stats = stats.get('test_mse_scaled', {}).get(obj, None)
                 if target_stats is None or len(target_stats.get('mean', [])) == 0:
+                    print(f"No data for {optimizer_name}, {obj}")
                     continue
-                levels = range(1, len(target_stats['mean']) + 1)
+                
+                # Convert MSE to RMSE
+                mse_mean = target_stats['mean']
+                mse_std = target_stats['std']
+                rmse_mean = np.sqrt(mse_mean)
+                rmse_std = np.sqrt(mse_std)  # Approximate RMSE std
+                
+                levels = range(1, len(rmse_mean) + 1)
                 style = style_map[optimizer_name]
-                ax.plot(levels, target_stats['mean'], label=style.get('label', optimizer_name),
-                        linestyle=style['linestyle'], marker=style['marker'], color=style['color'],
-                        markersize=6, linewidth=2)
-                ax.fill_between(levels, target_stats['mean'] - target_stats['std'], target_stats['mean'] + target_stats['std'],
-                                color=style['color'], alpha=0.15)
-            ax.set_xlabel('Complexity Level')
-            ax.set_ylabel('MSE')
-            ax.legend()
+                ax.plot(levels, rmse_mean, label=style.get('label', optimizer_name),
+                       linestyle=style['linestyle'], marker=style['marker'], color=style['color'],
+                       markersize=6, linewidth=2)
+                ax.fill_between(levels, rmse_mean - rmse_std, rmse_mean + rmse_std,
+                               color=style['color'], alpha=0.15)
+                plotted_any = True
+                print(f"Plotted {optimizer_name}, {obj}: {len(levels)} levels")
+            
+            if not plotted_any:
+                print(f"Warning: No data plotted for {obj}")
+            
+            ax.set_xlabel('Level', fontsize=10)
+            ax.set_ylabel('RMSE', fontsize=10)
+            ax.legend(fontsize=9)
             ax.grid(True, alpha=0.3)
             ax.set_yscale('log')
-        
-        # Remove unused subplots to match training layout
-        fig.delaxes(axes[0, 1])
-        fig.delaxes(axes[2, 2])
-        fig.delaxes(axes[2, 3])
+            ax.set_xticks(range(1, 6))  # Set x-axis to show only integers 1-5
         
         plt.tight_layout(pad=2.0, h_pad=2.0, w_pad=2.0)
-        
-        filename = f'Raw_training/monte_carlo_optimization_analysis_Combined_Raw.png'
-        plt.savefig(filename, dpi=300, bbox_inches='tight')
-        print(f"Monte Carlo visualization saved: {filename}")
+        filename2 = f'Raw_training/monte_carlo_per_target_rmse_Raw.png'
+        plt.savefig(filename2, dpi=300, bbox_inches='tight')
+        print(f"Per-target RMSE visualization saved: {filename2}")
         plt.show()
         
         return self
@@ -445,7 +516,7 @@ def main_monte_carlo_raw(n_simulations=10, enable_early_stopping=True, patience=
     print(f"Patience: {patience}")
     print(f"Parallel processing: {'enabled' if use_parallel else 'disabled'}")
     print(f"GPU acceleration: {'enabled' if use_gpu else 'disabled'}")
-    print("Optimizers: XGBoost (Single/Multi-output), LightGBM (Multi-output), CatBoost (Multi-output)")
+    print("Optimizers: CatBoost (Single/Multi-output)")
     print(f"Features: RAW (930+ columns)")
     print("="*60)
     
@@ -485,4 +556,4 @@ if __name__ == "__main__":
     
     # Run Monte Carlo analysis with raw features
     # You can change use_multioutput=True to test single multi-output model vs separate models per target
-    analyzer = main_monte_carlo_raw(n_simulations=20, enable_early_stopping=False, patience=3, use_parallel=True, use_gpu=False, use_multioutput=use_multioutput)
+    analyzer = main_monte_carlo_raw(n_simulations=5, enable_early_stopping=False, patience=3, use_parallel=False, use_gpu=False, use_multioutput=use_multioutput)
