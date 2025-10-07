@@ -30,6 +30,8 @@ The *IAL* approach can be configured to run either with a *RandomForest* or *XGB
 
 The active learning strategy relies on the [moDAL](https://github.com/modAL-python/modAL) library.
 
+---
+
 ## Recent Work (extension)
 Additional training and analysis scripts are provided in the [extension](https://github.com/andresdp/architecture-surrogates/tree/main/extension) folder to use [CatBoost](https://catboost.ai/) to build surrogate models involving _single-output or multi-output regression_.
 
@@ -55,7 +57,7 @@ python main_stplus_raw_training.py
 
 **Generated plots:** Displays per-target performance comparison between _CatBoost_ single-output and multi-output variants for _STPlus_ and a basic approach.
 
-### Monte Carlo Analysis Scripts
+### Monte Carlo Analysis
 - **[monte_carlo_raw_analysis.py](https://github.com/andresdp/architecture-surrogates/blob/main/extension/monte_carlo_raw_analysis.py)**: Runs multiple simulations of the _CoCoME_ features training to analyze performance variability and statistical significance. Provides confidence intervals and mean/standard deviation across multiple runs.
 
 **How to run:**
@@ -97,7 +99,7 @@ python stplus_sampling_curve.py
 
 **Generated plots:** STPlus-specific sampling curves comparing incremental learning performance against stratified baselines, showing how training data size affects model quality.
 
-### Key Features of _CatBoost_ Analysis
+### Key Features of _CatBoost_ 
 The extension scripts focus on **CatBoost** models because they:
 - Handle high-dimensional features (930+ for CoCoME, 700+ for STPlus) effectively
 - Support incremental learning
