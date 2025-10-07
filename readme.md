@@ -35,6 +35,10 @@ The active learning strategy relies on the [moDAL](https://github.com/modAL-pyth
 ## Recent Work (extension)
 Additional training and analysis scripts are provided in the [extension](https://github.com/andresdp/architecture-surrogates/tree/main/extension) folder to use [CatBoost](https://catboost.ai/) to build surrogate models involving _single-output or multi-output regression_.
 
+<p align="center">
+<img src="https://github.com/andresdp/architecture-surrogates/blob/main/surrogates-workflow.png" width="500"/>
+</p>
+
 ### CoCoME Features Training
 - **[main_cocome_raw_training.py](https://github.com/andresdp/architecture-surrogates/blob/main/extension/main_cocome_raw_training.py)**: Trains _CatBoost_ models using all 930+ features and 5 search levels from the CoCoME dataset. It uses incremental level-by-level training (Level 1→2→3→4→5) with separate models for each of the 8 objectives (m1, m2, m3, m4, p1, p2, p3, p4).
 
