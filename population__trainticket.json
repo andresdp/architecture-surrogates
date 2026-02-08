@@ -1,0 +1,773 @@
+{
+  "solutions" : [ {
+    "objectives" : {
+      "pricePerScenario__Login_job_class" : 0.36709882153467804,
+      "responseTimePerScenario__Login_job_class" : 345.961,
+      "pas" : 3.0,
+      "reliability" : -0.3062048505627286,
+      "changes" : 7.699999999999999,
+      "perfq" : -0.15253253014739104,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.15980117846532196,
+      "price" : 2.0219,
+      "responseTimePerScenario__Update user details_job_class" : 216.035,
+      "energyPerScenario__Login_job_class" : 28.86959086377246,
+      "responseTimePerScenario__Rebook a ticket_job_class" : 645455.0,
+      "power" : 57.22781043452399,
+      "energyPerScenario__Update user details_job_class" : 13.815462326004504,
+      "pricePerScenario__Update user details_job_class" : 0.03569999620500939,
+      "sysRespT" : 646016.996,
+      "energy" : 91098.39416095124,
+      "energyPerScenario__Rebook a ticket_job_class" : 14.542753720751536
+    },
+    "consideredObjectives" : {
+      "perfq" : -0.15253253014739104,
+      "pricePerScenario__Login_job_class" : 0.36709882153467804,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.15980117846532196,
+      "pas" : 3.0,
+      "price" : 2.0219,
+      "changes" : 7.699999999999999,
+      "energyPerScenario__Login_job_class" : 28.86959086377246,
+      "power" : 57.22781043452399,
+      "energyPerScenario__Update user details_job_class" : 13.815462326004504,
+      "pricePerScenario__Update user details_job_class" : 0.03569999620500939,
+      "energyPerScenario__Rebook a ticket_job_class" : 14.542753720751536
+    },
+    "solID" : 10,
+    "refactoring" : [ {
+      "name" : "mcnn",
+      "target" : "Seat",
+      "to" : "New-Node_d2.2xlarge_mbayzifiad",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "clone",
+      "target" : "container-ticket-info_t2.medium",
+      "to" : "container-ticket-info_t2.medium_fyxzifsnie",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "moc",
+      "target" : "getByID",
+      "to" : "Login",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "clone",
+      "target" : "container-station_t2.medium",
+      "to" : "container-station_t2.medium_otdoiebnkv",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    } ],
+    "markedForSurrogate" : false
+  }, {
+    "objectives" : {
+      "pricePerScenario__Login_job_class" : 0.05876978720774599,
+      "responseTimePerScenario__Login_job_class" : 30107.6,
+      "pas" : 3.0,
+      "reliability" : -0.43382697604504294,
+      "changes" : 8.52,
+      "perfq" : -0.21652330664139602,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.25225813254025475,
+      "price" : 1.5270000000000001,
+      "responseTimePerScenario__Update user details_job_class" : 216.28,
+      "energyPerScenario__Login_job_class" : 7.892465876853184,
+      "responseTimePerScenario__Rebook a ticket_job_class" : 175144.0,
+      "power" : 52.062847516199994,
+      "energyPerScenario__Update user details_job_class" : 13.793347398795936,
+      "pricePerScenario__Update user details_job_class" : 0.035671964586658195,
+      "sysRespT" : 205467.88,
+      "energy" : 3693.015428295561,
+      "energyPerScenario__Rebook a ticket_job_class" : 30.377017638227873
+    },
+    "consideredObjectives" : {
+      "perfq" : -0.21652330664139602,
+      "pricePerScenario__Login_job_class" : 0.05876978720774599,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.25225813254025475,
+      "pas" : 3.0,
+      "price" : 1.5270000000000001,
+      "changes" : 8.52,
+      "energyPerScenario__Login_job_class" : 7.892465876853184,
+      "power" : 52.062847516199994,
+      "energyPerScenario__Update user details_job_class" : 13.793347398795936,
+      "pricePerScenario__Update user details_job_class" : 0.035671964586658195,
+      "energyPerScenario__Rebook a ticket_job_class" : 30.377017638227873
+    },
+    "solID" : 8,
+    "refactoring" : [ {
+      "name" : "moc",
+      "target" : "login",
+      "to" : "Rebook",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "moc",
+      "target" : "generate",
+      "to" : "Travel-plan",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "moc",
+      "target" : "verify",
+      "to" : "Sso",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "mcnn",
+      "target" : "Travel-plan",
+      "to" : "New-Node_t2.medium_wgjqgchnop",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    } ],
+    "markedForSurrogate" : false
+  }, {
+    "objectives" : {
+      "pricePerScenario__Login_job_class" : 0.7427999999999999,
+      "responseTimePerScenario__Login_job_class" : 263.343,
+      "pas" : 2.0,
+      "reliability" : -0.24737780630015604,
+      "changes" : 10.290000000000001,
+      "perfq" : -0.18430454042765262,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.2793,
+      "price" : 2.6693000000000002,
+      "responseTimePerScenario__Update user details_job_class" : 216.035,
+      "energyPerScenario__Login_job_class" : 47.76054971999999,
+      "responseTimePerScenario__Rebook a ticket_job_class" : 200044.0,
+      "power" : 95.70354538283999,
+      "energyPerScenario__Update user details_job_class" : 13.815462326004504,
+      "pricePerScenario__Update user details_job_class" : 0.03569999620500939,
+      "sysRespT" : 200523.378,
+      "energy" : 28378.22147355067,
+      "energyPerScenario__Rebook a ticket_job_class" : 34.12752981284
+    },
+    "consideredObjectives" : {
+      "perfq" : -0.18430454042765262,
+      "pricePerScenario__Login_job_class" : 0.7427999999999999,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.2793,
+      "pas" : 2.0,
+      "price" : 2.6693000000000002,
+      "changes" : 10.290000000000001,
+      "energyPerScenario__Login_job_class" : 47.76054971999999,
+      "power" : 95.70354538283999,
+      "energyPerScenario__Update user details_job_class" : 13.815462326004504,
+      "pricePerScenario__Update user details_job_class" : 0.03569999620500939,
+      "energyPerScenario__Rebook a ticket_job_class" : 34.12752981284
+    },
+    "solID" : 7,
+    "refactoring" : [ {
+      "name" : "moc",
+      "target" : "generate",
+      "to" : "Order-other",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "mcnn",
+      "target" : "Route-plan",
+      "to" : "New-Node_d2.2xlarge_vckkinxguh",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "moncnn",
+      "target" : "getByID",
+      "to" : "New-Component_yrblqqyaju",
+      "where" : "New-Node_m5ad.xlarge_byxkyejnzl",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "mcnn",
+      "target" : "Ticket-info",
+      "to" : "New-Node_d2.2xlarge_embbnmwwhy",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    } ],
+    "markedForSurrogate" : true
+  }, {
+    "objectives" : {
+      "pricePerScenario__Login_job_class" : 0.492611517076811,
+      "responseTimePerScenario__Login_job_class" : 13589.1,
+      "pas" : 2.0,
+      "reliability" : -0.43269933004504296,
+      "changes" : 11.3,
+      "perfq" : -0.2524583295292028,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.2498884081208871,
+      "price" : 2.4257,
+      "responseTimePerScenario__Update user details_job_class" : 230.507,
+      "energyPerScenario__Login_job_class" : 29.158251030740395,
+      "responseTimePerScenario__Rebook a ticket_job_class" : 175024.0,
+      "power" : 72.84551524929999,
+      "energyPerScenario__Update user details_job_class" : 13.61548228409944,
+      "pricePerScenario__Update user details_job_class" : 0.0357000023735405,
+      "sysRespT" : 188843.607,
+      "energy" : 1848.3065325180214,
+      "energyPerScenario__Rebook a ticket_job_class" : 30.07177417809371
+    },
+    "consideredObjectives" : {
+      "perfq" : -0.2524583295292028,
+      "pricePerScenario__Login_job_class" : 0.492611517076811,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.2498884081208871,
+      "pas" : 2.0,
+      "price" : 2.4257,
+      "changes" : 11.3,
+      "energyPerScenario__Login_job_class" : 29.158251030740395,
+      "power" : 72.84551524929999,
+      "energyPerScenario__Update user details_job_class" : 13.61548228409944,
+      "pricePerScenario__Update user details_job_class" : 0.0357000023735405,
+      "energyPerScenario__Rebook a ticket_job_class" : 30.07177417809371
+    },
+    "solID" : 6,
+    "refactoring" : [ {
+      "name" : "moc",
+      "target" : "login",
+      "to" : "Rebook",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "clone",
+      "target" : "continer-route-plan_d2.2xlarge",
+      "to" : "continer-route-plan_d2.2xlarge_uxurlygmhq",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "clone",
+      "target" : "container-sso_t2.micro",
+      "to" : "container-sso_t2.micro_qutjjynhjy",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "mcnn",
+      "target" : "Verification",
+      "to" : "New-Node_d2.2xlarge_gtxyosngdu",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    } ],
+    "markedForSurrogate" : true
+  }, {
+    "objectives" : {
+      "pricePerScenario__Login_job_class" : 0.4952003728157678,
+      "responseTimePerScenario__Login_job_class" : 263.343,
+      "pas" : 6.0,
+      "reliability" : -0.30704655431272854,
+      "changes" : 11.52,
+      "perfq" : -0.09684097282356233,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.2793,
+      "price" : 1.8063000000000002,
+      "responseTimePerScenario__Update user details_job_class" : 344.543,
+      "energyPerScenario__Login_job_class" : 38.790563226290125,
+      "responseTimePerScenario__Rebook a ticket_job_class" : 200044.0,
+      "power" : 79.30505764283998,
+      "energyPerScenario__Update user details_job_class" : 6.386996029373614,
+      "pricePerScenario__Update user details_job_class" : 0.003999998114528361,
+      "sysRespT" : 200651.886,
+      "energy" : 28346.034721461634,
+      "energyPerScenario__Rebook a ticket_job_class" : 34.12752981284
+    },
+    "consideredObjectives" : {
+      "perfq" : -0.09684097282356233,
+      "pricePerScenario__Login_job_class" : 0.4952003728157678,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.2793,
+      "pas" : 6.0,
+      "price" : 1.8063000000000002,
+      "changes" : 11.52,
+      "energyPerScenario__Login_job_class" : 38.790563226290125,
+      "power" : 79.30505764283998,
+      "energyPerScenario__Update user details_job_class" : 6.386996029373614,
+      "pricePerScenario__Update user details_job_class" : 0.003999998114528361,
+      "energyPerScenario__Rebook a ticket_job_class" : 34.12752981284
+    },
+    "solID" : 3,
+    "refactoring" : [ {
+      "name" : "mcnn",
+      "target" : "Rebook",
+      "to" : "New-Node_t2.medium_ujgaxmcfun",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "moc",
+      "target" : "updateUser",
+      "to" : "Sso",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "clone",
+      "target" : "container-seat_t2.medium",
+      "to" : "container-seat_t2.medium_frjaaqusqy",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "moncnn",
+      "target" : "getByID",
+      "to" : "New-Component_idvmlooram",
+      "where" : "New-Node_d2.2xlarge_iafgumrqml",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    } ],
+    "markedForSurrogate" : false
+  }, {
+    "objectives" : {
+      "pricePerScenario__Login_job_class" : 0.495200390586179,
+      "responseTimePerScenario__Login_job_class" : 275.895,
+      "pas" : 3.0,
+      "reliability" : -0.42924189004504293,
+      "changes" : 15.120000000000001,
+      "perfq" : -0.2586047018197884,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.2793,
+      "price" : 2.2381,
+      "responseTimePerScenario__Update user details_job_class" : 217.832,
+      "energyPerScenario__Login_job_class" : 38.7941638300728,
+      "responseTimePerScenario__Rebook a ticket_job_class" : 174939.0,
+      "power" : 100.43053123806999,
+      "energyPerScenario__Update user details_job_class" : 27.509221488574667,
+      "pricePerScenario__Update user details_job_class" : 0.2792997496362282,
+      "sysRespT" : 175432.727,
+      "energy" : 24832.918353356396,
+      "energyPerScenario__Rebook a ticket_job_class" : 34.12716334806999
+    },
+    "consideredObjectives" : {
+      "perfq" : -0.2586047018197884,
+      "pricePerScenario__Login_job_class" : 0.495200390586179,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.2793,
+      "pas" : 3.0,
+      "price" : 2.2381,
+      "changes" : 15.120000000000001,
+      "energyPerScenario__Login_job_class" : 38.7941638300728,
+      "power" : 100.43053123806999,
+      "energyPerScenario__Update user details_job_class" : 27.509221488574667,
+      "pricePerScenario__Update user details_job_class" : 0.2792997496362282,
+      "energyPerScenario__Rebook a ticket_job_class" : 34.12716334806999
+    },
+    "solID" : 2,
+    "refactoring" : [ {
+      "name" : "moncnn",
+      "target" : "login",
+      "to" : "New-Component_ukdqildbzu",
+      "where" : "New-Node_t2.medium_vungcjspke",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "clone",
+      "target" : "container-login_m5ad.xlarge",
+      "to" : "container-login_m5ad.xlarge_ocobkryzvi",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "moc",
+      "target" : "login",
+      "to" : "Admin-user",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "mcnn",
+      "target" : "Sso",
+      "to" : "New-Node_m5ad.xlarge_pcjmfkupnx",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    } ],
+    "markedForSurrogate" : true
+  }, {
+    "objectives" : {
+      "pricePerScenario__Login_job_class" : 0.495200390586179,
+      "responseTimePerScenario__Login_job_class" : 275.895,
+      "pas" : 2.0,
+      "reliability" : -0.3096176505627285,
+      "changes" : 13.48,
+      "perfq" : -0.19198093951272915,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.4952,
+      "price" : 2.1213,
+      "responseTimePerScenario__Update user details_job_class" : 216.179,
+      "energyPerScenario__Login_job_class" : 38.7941638300728,
+      "responseTimePerScenario__Rebook a ticket_job_class" : 174984.0,
+      "power" : 93.39735298545,
+      "energyPerScenario__Update user details_job_class" : 15.733354733999997,
+      "pricePerScenario__Update user details_job_class" : 0.0397,
+      "sysRespT" : 175476.074,
+      "energy" : 52472.2044398875,
+      "energyPerScenario__Rebook a ticket_job_class" : 38.86986950145
+    },
+    "consideredObjectives" : {
+      "perfq" : -0.19198093951272915,
+      "pricePerScenario__Login_job_class" : 0.495200390586179,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.4952,
+      "pas" : 2.0,
+      "price" : 2.1213,
+      "changes" : 13.48,
+      "energyPerScenario__Login_job_class" : 38.7941638300728,
+      "power" : 93.39735298545,
+      "energyPerScenario__Update user details_job_class" : 15.733354733999997,
+      "pricePerScenario__Update user details_job_class" : 0.0397,
+      "energyPerScenario__Rebook a ticket_job_class" : 38.86986950145
+    },
+    "solID" : 0,
+    "refactoring" : [ {
+      "name" : "mcnn",
+      "target" : "Travel-plan",
+      "to" : "New-Node_m6i.xlarge_svzxdrvgcn",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "clone",
+      "target" : "container-login_m5ad.xlarge",
+      "to" : "container-login_m5ad.xlarge_ldgenrnmzi",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "moncnn",
+      "target" : "modify",
+      "to" : "New-Component_aulasonxla",
+      "where" : "New-Node_m5ad.xlarge_pioqpbsnan",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "mcnn",
+      "target" : "Rebook",
+      "to" : "New-Node_m5ad.xlarge_ynytdujukj",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    } ],
+    "markedForSurrogate" : true
+  }, {
+    "objectives" : {
+      "pricePerScenario__Login_job_class" : 0.36709882153467804,
+      "responseTimePerScenario__Login_job_class" : 345.961,
+      "pas" : 3.0,
+      "reliability" : -0.3062048505627286,
+      "changes" : 7.699999999999999,
+      "perfq" : -0.15253253014739104,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.15980117846532196,
+      "price" : 2.0219,
+      "responseTimePerScenario__Update user details_job_class" : 216.035,
+      "energyPerScenario__Login_job_class" : 28.86959086377246,
+      "responseTimePerScenario__Rebook a ticket_job_class" : 645455.0,
+      "power" : 57.22781043452399,
+      "energyPerScenario__Update user details_job_class" : 13.815462326004504,
+      "pricePerScenario__Update user details_job_class" : 0.03569999620500939,
+      "sysRespT" : 646016.996,
+      "energy" : 91098.39416095124,
+      "energyPerScenario__Rebook a ticket_job_class" : 14.542753720751536
+    },
+    "consideredObjectives" : {
+      "perfq" : -0.15253253014739104,
+      "pricePerScenario__Login_job_class" : 0.36709882153467804,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.15980117846532196,
+      "pas" : 3.0,
+      "price" : 2.0219,
+      "changes" : 7.699999999999999,
+      "energyPerScenario__Login_job_class" : 28.86959086377246,
+      "power" : 57.22781043452399,
+      "energyPerScenario__Update user details_job_class" : 13.815462326004504,
+      "pricePerScenario__Update user details_job_class" : 0.03569999620500939,
+      "energyPerScenario__Rebook a ticket_job_class" : 14.542753720751536
+    },
+    "solID" : 30,
+    "refactoring" : [ {
+      "name" : "mcnn",
+      "target" : "Seat",
+      "to" : "New-Node_d2.2xlarge_mbayzifiad",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "clone",
+      "target" : "container-ticket-info_t2.medium",
+      "to" : "container-ticket-info_t2.medium_fyxzifsnie",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "moc",
+      "target" : "getByID",
+      "to" : "Login",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "clone",
+      "target" : "container-station_t2.medium",
+      "to" : "container-station_t2.medium_otdoiebnkv",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    } ],
+    "markedForSurrogate" : true
+  }, {
+    "objectives" : {
+      "pricePerScenario__Login_job_class" : 0.495200390586179,
+      "responseTimePerScenario__Login_job_class" : 275.895,
+      "pas" : 2.0,
+      "reliability" : -0.31535235996272853,
+      "changes" : 11.52,
+      "perfq" : -0.19198093951272915,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.4952,
+      "price" : 2.0222,
+      "responseTimePerScenario__Update user details_job_class" : 216.179,
+      "energyPerScenario__Login_job_class" : 38.7941638300728,
+      "responseTimePerScenario__Rebook a ticket_job_class" : 174984.0,
+      "power" : 95.73228604744999,
+      "energyPerScenario__Update user details_job_class" : 18.068287796,
+      "pricePerScenario__Update user details_job_class" : 0.0674,
+      "sysRespT" : 175476.074,
+      "energy" : 52479.9044398875,
+      "energyPerScenario__Rebook a ticket_job_class" : 38.86986950145
+    },
+    "consideredObjectives" : {
+      "perfq" : -0.19198093951272915,
+      "pricePerScenario__Login_job_class" : 0.495200390586179,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.4952,
+      "pas" : 2.0,
+      "price" : 2.0222,
+      "changes" : 11.52,
+      "energyPerScenario__Login_job_class" : 38.7941638300728,
+      "power" : 95.73228604744999,
+      "energyPerScenario__Update user details_job_class" : 18.068287796,
+      "pricePerScenario__Update user details_job_class" : 0.0674,
+      "energyPerScenario__Rebook a ticket_job_class" : 38.86986950145
+    },
+    "solID" : 27,
+    "refactoring" : [ {
+      "name" : "moc",
+      "target" : "modify",
+      "to" : "Station",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "clone",
+      "target" : "container-login_m5ad.xlarge",
+      "to" : "container-login_m5ad.xlarge_ldgenrnmzi",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "moncnn",
+      "target" : "modify",
+      "to" : "New-Component_aulasonxla",
+      "where" : "New-Node_m5ad.xlarge_pioqpbsnan",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "mcnn",
+      "target" : "Rebook",
+      "to" : "New-Node_m5ad.xlarge_ynytdujukj",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    } ],
+    "markedForSurrogate" : true
+  }, {
+    "objectives" : {
+      "pricePerScenario__Login_job_class" : 0.495200390586179,
+      "responseTimePerScenario__Login_job_class" : 275.895,
+      "pas" : 2.0,
+      "reliability" : -0.3153523599627285,
+      "changes" : 11.52,
+      "perfq" : -0.19198093951272915,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.4952,
+      "price" : 2.0222,
+      "responseTimePerScenario__Update user details_job_class" : 216.179,
+      "energyPerScenario__Login_job_class" : 38.7941638300728,
+      "responseTimePerScenario__Rebook a ticket_job_class" : 174984.0,
+      "power" : 95.73228604744999,
+      "energyPerScenario__Update user details_job_class" : 18.068287796,
+      "pricePerScenario__Update user details_job_class" : 0.0674,
+      "sysRespT" : 175476.074,
+      "energy" : 52479.9044398875,
+      "energyPerScenario__Rebook a ticket_job_class" : 38.86986950145
+    },
+    "consideredObjectives" : {
+      "perfq" : -0.19198093951272915,
+      "pricePerScenario__Login_job_class" : 0.495200390586179,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.4952,
+      "pas" : 2.0,
+      "price" : 2.0222,
+      "changes" : 11.52,
+      "energyPerScenario__Login_job_class" : 38.7941638300728,
+      "power" : 95.73228604744999,
+      "energyPerScenario__Update user details_job_class" : 18.068287796,
+      "pricePerScenario__Update user details_job_class" : 0.0674,
+      "energyPerScenario__Rebook a ticket_job_class" : 38.86986950145
+    },
+    "solID" : 50,
+    "refactoring" : [ {
+      "name" : "moc",
+      "target" : "modify",
+      "to" : "Station",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "clone",
+      "target" : "container-login_m5ad.xlarge",
+      "to" : "container-login_m5ad.xlarge_ldgenrnmzi",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "moncnn",
+      "target" : "modify",
+      "to" : "New-Component_aulasonxla",
+      "where" : "New-Node_m5ad.xlarge_pioqpbsnan",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "mcnn",
+      "target" : "Rebook",
+      "to" : "New-Node_m5ad.xlarge_ynytdujukj",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    } ],
+    "markedForSurrogate" : true
+  }, {
+    "objectives" : {
+      "pricePerScenario__Login_job_class" : 0.495200390586179,
+      "responseTimePerScenario__Login_job_class" : 275.895,
+      "pas" : 3.0,
+      "reliability" : -0.43716010804504296,
+      "changes" : 15.530000000000001,
+      "perfq" : -0.258636947370648,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.27831066954643624,
+      "price" : 1.9905000000000002,
+      "responseTimePerScenario__Update user details_job_class" : 218.707,
+      "energyPerScenario__Login_job_class" : 38.7941638300728,
+      "responseTimePerScenario__Rebook a ticket_job_class" : 175583.0,
+      "power" : 100.29655014480998,
+      "energyPerScenario__Update user details_job_class" : 27.487888370977682,
+      "pricePerScenario__Update user details_job_class" : 0.2802899246460283,
+      "sysRespT" : 176077.602,
+      "energy" : 24923.695385952396,
+      "energyPerScenario__Rebook a ticket_job_class" : 34.01460478211022
+    },
+    "consideredObjectives" : {
+      "perfq" : -0.258636947370648,
+      "pricePerScenario__Login_job_class" : 0.495200390586179,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.27831066954643624,
+      "pas" : 3.0,
+      "price" : 1.9905000000000002,
+      "changes" : 15.530000000000001,
+      "energyPerScenario__Login_job_class" : 38.7941638300728,
+      "power" : 100.29655014480998,
+      "energyPerScenario__Update user details_job_class" : 27.487888370977682,
+      "pricePerScenario__Update user details_job_class" : 0.2802899246460283,
+      "energyPerScenario__Rebook a ticket_job_class" : 34.01460478211022
+    },
+    "solID" : 49,
+    "refactoring" : [ {
+      "name" : "moncnn",
+      "target" : "login",
+      "to" : "New-Component_ukdqildbzu",
+      "where" : "New-Node_t2.medium_vungcjspke",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "moc",
+      "target" : "modify",
+      "to" : "Order-other",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "moc",
+      "target" : "login",
+      "to" : "Admin-user",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "mcnn",
+      "target" : "Sso",
+      "to" : "New-Node_m5ad.xlarge_pcjmfkupnx",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    } ],
+    "markedForSurrogate" : false
+  }, {
+    "objectives" : {
+      "pricePerScenario__Login_job_class" : 0.495200390586179,
+      "responseTimePerScenario__Login_job_class" : 275.895,
+      "pas" : 2.0,
+      "reliability" : -0.3096176505627285,
+      "changes" : 13.48,
+      "perfq" : -0.19198093951272915,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.4952,
+      "price" : 2.1213,
+      "responseTimePerScenario__Update user details_job_class" : 216.179,
+      "energyPerScenario__Login_job_class" : 38.7941638300728,
+      "responseTimePerScenario__Rebook a ticket_job_class" : 174984.0,
+      "power" : 93.39735298545,
+      "energyPerScenario__Update user details_job_class" : 15.733354733999997,
+      "pricePerScenario__Update user details_job_class" : 0.0397,
+      "sysRespT" : 175476.074,
+      "energy" : 52472.2044398875,
+      "energyPerScenario__Rebook a ticket_job_class" : 38.86986950145
+    },
+    "consideredObjectives" : {
+      "perfq" : -0.19198093951272915,
+      "pricePerScenario__Login_job_class" : 0.495200390586179,
+      "pricePerScenario__Rebook a ticket_job_class" : 0.4952,
+      "pas" : 2.0,
+      "price" : 2.1213,
+      "changes" : 13.48,
+      "energyPerScenario__Login_job_class" : 38.7941638300728,
+      "power" : 93.39735298545,
+      "energyPerScenario__Update user details_job_class" : 15.733354733999997,
+      "pricePerScenario__Update user details_job_class" : 0.0397,
+      "energyPerScenario__Rebook a ticket_job_class" : 38.86986950145
+    },
+    "solID" : 48,
+    "refactoring" : [ {
+      "name" : "mcnn",
+      "target" : "Travel-plan",
+      "to" : "New-Node_m6i.xlarge_svzxdrvgcn",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "clone",
+      "target" : "container-login_m5ad.xlarge",
+      "to" : "container-login_m5ad.xlarge_ldgenrnmzi",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "moncnn",
+      "target" : "modify",
+      "to" : "New-Component_aulasonxla",
+      "where" : "New-Node_m5ad.xlarge_pioqpbsnan",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    }, {
+      "name" : "mcnn",
+      "target" : "Rebook",
+      "to" : "New-Node_m5ad.xlarge_ynytdujukj",
+      "where" : "",
+      "taggedValue" : "",
+      "scalingFactor" : ""
+    } ],
+    "markedForSurrogate" : true
+  } ],
+  "iteration" : 2,
+  "independentRun" : -1
+}

@@ -1,0 +1,13 @@
+count_family_OTHER,count_family_c5,count_family_c6i,count_family_d2,count_family_m5,count_family_m5ad,count_family_m6i,count_family_r5,count_family_r6i,count_family_t2,count_family_t3,count_mcnn_to_family_OTHER,count_mcnn_to_family_c5,count_mcnn_to_family_c6i,count_mcnn_to_family_d2,count_mcnn_to_family_m5,count_mcnn_to_family_m5ad,count_mcnn_to_family_m6i,count_mcnn_to_family_r5,count_mcnn_to_family_r6i,count_mcnn_to_family_t2,count_mcnn_to_family_t3,count_moncnn_to_family_OTHER,count_moncnn_to_family_c5,count_moncnn_to_family_c6i,count_moncnn_to_family_d2,count_moncnn_to_family_m5,count_moncnn_to_family_m5ad,count_moncnn_to_family_m6i,count_moncnn_to_family_r5,count_moncnn_to_family_r6i,count_moncnn_to_family_t2,count_moncnn_to_family_t3,count_clone_to_family_OTHER,count_clone_to_family_c5,count_clone_to_family_c6i,count_clone_to_family_d2,count_clone_to_family_m5,count_clone_to_family_m5ad,count_clone_to_family_m6i,count_clone_to_family_r5,count_clone_to_family_r6i,count_clone_to_family_t2,count_clone_to_family_t3
+0,0,0,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,3,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0
+0,0,0,2,0,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,2,0,0,0,0,0,0,0
+0,0,0,0,0,0,2,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
+0,0,0,1,0,0,1,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
+0,0,0,0,0,1,2,0,0,0,0,0,0,0,0,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0
+0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
+0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,0,0,0,0
+0,0,0,0,0,2,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0
+0,0,0,0,0,2,1,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0
